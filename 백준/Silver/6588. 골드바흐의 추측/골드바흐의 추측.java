@@ -10,17 +10,19 @@ public class Main{
         
         try{
             BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-            StringBuilder sb = new StringBuilder();
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+            //StringBuilder sb = new StringBuilder();
             
-            N = Integer.parseInt(br.readLine());
-            while(N != 0){
-                //eratos(N);
+            //N = Integer.parseInt(br.readLine()))
+            while((N = Integer.parseInt(br.readLine())) != 0){
+                /**시간초과**///eratos(N);
                 boolean flag=false;
                
                 for(int i=2;i<=N/2;i++){ 
-                    if(!nonprime[i] && !nonprime[N-i]){ //if 중첩 필요 없음
-                        //sb.append(N +" = "+ i +" + "+ (N-i));
-                        System.out.println(N +" = "+ i +" + "+ (N-i));
+                    if(!nonprime[i] && !nonprime[N-i]){ //if 중첩으로 ㄴㄴ
+                        /*출력초과*///sb 재활용 sb.append(N +" = "+ i +" + "+ (N-i));
+                        //System.out.println(N +" = "+ i +" + "+ (N-i));
+                        bw.write(N + " = " + i + " + " + (N-i) + "\n");
                         flag=true;
                         break;
                     }
@@ -28,8 +30,10 @@ public class Main{
                 }
                 if(!flag) System.out.println("Goldbach's conjecture is wrong.");
                 
-                N = Integer.parseInt(br.readLine());
+                //N = Integer.parseInt(br.readLine());
             }
+            bw.flush();
+            bw.close();    
         }catch(IOException e){return;}
     }
     
