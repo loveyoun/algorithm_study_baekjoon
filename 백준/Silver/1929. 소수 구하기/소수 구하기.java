@@ -1,15 +1,19 @@
 import java.io.*;
+import java.util.*;
 
 public class Main{
     
     public static void main(String[] args){
         try{
-            BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
             StringBuilder sb = new StringBuilder();
 
-            String nm[] = input.readLine().split(" ");       
+            /*String nm[] = br.readLine().split(" ");       
             int M = Integer.parseInt(nm[0]);
-            int N = Integer.parseInt(nm[1]);
+            int N = Integer.parseInt(nm[1]);*/
+            StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+            int M = Integer.parseInt(st.nextToken());
+            int N = Integer.parseInt(st.nextToken());
             /*int[] A = new int[N+1];
             for(int i=2;i<=N;i++) A[i] = i;*/
             boolean[] nonprime = new boolean[N+1]; //false로 초기화
