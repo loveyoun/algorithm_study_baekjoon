@@ -41,6 +41,7 @@ public class Main {
                     break;
                 case "back":
                     if(queue.size()>0) {
+                        /*sb.append(sb.charAt(queue.size()*2-2) + "\n"); 이건 틀렸지만, 저장문자열에서 찾을 수도 있다.*/
                         //queue.add(queue.poll());
                         for(int y=1;y<queue.size();y++){
                             queue.add(queue.poll());
@@ -51,7 +52,7 @@ public class Main {
                     } /*else if (queue.size()==1) {
                         sb.append(queue.poll() + "\n");
                         break;
-                    } */
+                    }*/
                     else sb.append(-1 + "\n");
                     break;
                 default: break;
