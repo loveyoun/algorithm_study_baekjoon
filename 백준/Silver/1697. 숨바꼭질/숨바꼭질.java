@@ -16,7 +16,7 @@ public class Main {
     static boolean[] visited;
 
     public static void main(String[] args) throws IOException {
-        /** 1697_Algorithm flow:
+        /** 1697_Algorithm flow: 최소, 최단은 BFS로 해야 시간초과 안 나잖슴...
          **/
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -25,11 +25,13 @@ public class Main {
         N = Integer.parseInt(stmp[0]);
         K = Integer.parseInt(stmp[1]);
 
+        visited = new boolean[100001];
+        secs = 0;
+        found = false;
+
+        /** 이거 떄매... 젭알 조건... **/
         if (N == K) System.out.println(0);
         else {
-            visited = new boolean[100001];
-            secs = 0;
-            found = false;
             BFS(N, 0);
 
             if (found) System.out.println(secs);
@@ -49,13 +51,15 @@ public class Main {
                 if (i == 2) new_x = node.x * 2;
                 else new_x = node.x + dx[i];
 
+                /** index check 반듯이 **/
                 if (new_x >= 0 && new_x <= 100000) {
+
+                    if (new_x == K) {
+                        found = true;
+                        secs = node.count + 1;
+                        break;
+                    }
                     if (!visited[new_x]) {
-                        if (new_x == K) {
-                            found = true;
-                            secs = node.count + 1;
-                            break;
-                        }
 
                         visited[new_x] = true;
                         queue.add(new Node(new_x, node.count + 1)); /* ++n.count n.count 도 올라감*/
