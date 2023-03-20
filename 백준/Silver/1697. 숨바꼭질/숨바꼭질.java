@@ -53,13 +53,14 @@ public class Main {
 
                 /** index check 반듯이 **/
                 if (new_x >= 0 && new_x <= 100000) {
-
-                    if (new_x == K) {
-                        found = true;
-                        secs = node.count + 1;
-                        break;
-                    }
                     if (!visited[new_x]) {
+                        /* 밖으로 빼는게 조건 확인 한 번 더 안 해서 빠르긴 함 
+                        * 0일 때 계속 0이라서 ㄱㅊ? 했는데*/
+                        if (new_x == K) {
+                            found = true;
+                            secs = node.count + 1;
+                            break;
+                        }
 
                         visited[new_x] = true;
                         queue.add(new Node(new_x, node.count + 1)); /* ++n.count n.count 도 올라감*/
