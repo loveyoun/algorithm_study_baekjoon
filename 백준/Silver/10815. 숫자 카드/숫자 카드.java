@@ -1,6 +1,7 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.StringTokenizer;
 
 public class Main {
@@ -24,24 +25,28 @@ public class Main {
         Arrays.sort(sangen);
 
         int M = Integer.parseInt(br.readLine());
-        //int[] arr = new int[M];
-        Cards[] arr = new Cards[M];
+        int[] arr = new int[M];
+        /*Cards[] arr = new Cards[M];
         int[] answer = new int[M];
+         */
         st = new StringTokenizer(br.readLine(), " ");
         for (int i = 0; i < M; i++) {
-            arr[i] = new Cards(Integer.parseInt(st.nextToken()), i);
+            arr[i] = Integer.parseInt(st.nextToken());
+            //arr[i] = new Cards(Integer.parseInt(st.nextToken()), i);
         }
-        Arrays.sort(arr, new Comparator<Cards>() {
+        /*Arrays.sort(arr, new Comparator<Cards>() {
             @Override
             public int compare(Cards o1, Cards o2) {
                 return o1.value - o2.value;
             }
         });
+        */
 
 
-        /** 변수 재사용 **/
-        int start = 0;
+        /** 변수 재사용
+         int start = 0; **/
         for (int i = 0; i < M; i++) {
+            int start = 0;
             int end = N - 1;
             boolean flag = false;
 
@@ -49,9 +54,9 @@ public class Main {
                 int mid_idx = (start + end) / 2;
                 int MID = sangen[mid_idx];
 
-                if (MID < arr[i].value) {
+                if (MID < arr[i]) {
                     start = mid_idx + 1;
-                } else if (MID > arr[i].value) {
+                } else if (MID > arr[i]) {
                     /*
                      * IndexOutOfBoundsException 일어날일 없나?
                      * !!!없다!!!
@@ -65,14 +70,20 @@ public class Main {
                 }
             }
 
+            if (flag) sb.append(1 + " ");
+            else sb.append(0 + " ");
+
+            /*
             if (flag) answer[arr[i].index] = 1;
             else answer[arr[i].index] = 0;
+            */
         }
 
-        for(int i=0;i<M;i++) sb.append(answer[i] + " ");
+        //for(int i=0;i<M;i++) sb.append(answer[i] + " ");
         System.out.println(sb);
     }
 
+    /*
     static class Cards {
         int value;
         int index;
@@ -82,5 +93,6 @@ public class Main {
             this.index = index;
         }
     }
+    */
 
 }
