@@ -2,35 +2,75 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 class Solution {
+    public String solution(int[] numbers){
+        StringBuilder sb = new StringBuilder();
+        int N = numbers.length;
+        ArrNum[] arranged = new ArrNum[N];
 
-	public String solution(int[] numbers) {
+        int zeros = 0;
+        for (int i = 0; i < N; i++) {
+            int cipher = 1;
+            int first = numbers[i];
+            int tmp = 0;
 
-		// 숫자를 문자열로 변환
-		String[] result = new String[numbers.length];
-		for (int i = 0; i < numbers.length; i++) {
-			result[i] = String.valueOf(numbers[i]);
-		}
+            if (first == 0) zeros++;
+            else {
+                while (first / 10 != 0) {
+                    first /= 10;
+                    cipher++;
+                }
+                /*
+                3:
+                cipher = 1, *= 10^(4 - 1)
+                += first * 10^(0,1,2)
+                89:
+                cipher = 2, *= 10^(4 - 2)
+                += numbers[i]
+                287:
+                cipher = 3, *= 10^(4 - 3)
+                += first * 10^0
+                */
+                tmp = (int) (numbers[i] * Math.pow(10, (4 - cipher)));
+                if (cipher == 2) tmp += numbers[i];
+                else
+                    for (int j = 0; j < 4 - cipher; j++) tmp += (int) (first * Math.pow(10, j));
+            }
+            arranged[i] = new ArrNum(tmp, i);
+        }
 
-		// 정렬
-		Arrays.sort(result, new Comparator<String>() {
 
-			@Override
-			public int compare(String o1, String o2) {
+        Arrays.sort(arranged, new Comparator<ArrNum>() {
+            @Override
+            public int compare(ArrNum o1, ArrNum o2) {
+                return o1.value - o2.value;
+            }
+        });
 
-				return ((o2 + o1).compareTo(o1 + o2));
-			}
-		});
+        /** 특이 케이스 : 11번 TC **/
+        if (zeros == N) sb.append(0);
+        else {
+            for (int i = N - 1; i >= 0; i--) {
+                int value = arranged[i].value;
+                int origin_index = arranged[i].origin_index;
 
-		// 0만 여러개 있는 배열의 경우 하나의 0만 리턴
-		if(result[0].equals("0")) {
-			return "0";
-		}
-		
-		String answer = "";
-		// 정렬된 문자 하나로 합치기
-		for (String a : result) {
-			answer += a;
-		}
-		return answer;
-	}
+                if (value == 0) continue;
+
+                sb.append(numbers[origin_index]);
+            }
+
+            for (int i = 0; i < zeros; i++) sb.append(0);
+        }
+
+        return sb.toString();
+    }
+}
+
+class ArrNum {
+    int value;
+    int origin_index;
+
+    ArrNum(int value, int origin_index) {
+        this.value = value;
+        this.origin_index = origin_index;
+    }
 }
