@@ -16,8 +16,12 @@ public class Main {
             String[] tmp = br.readLine().split(" ");
             int b = Integer.parseInt(tmp[0]);
             int a = Integer.parseInt(tmp[1]);
-            //a > b
-            int gcd_ab = a * b / gcd(a, b);
+            /**
+             gcd(10, 6) ==
+             gcd(6, 10) == 6
+             -> gcd(10, 6)
+             **/
+            int gcd_ab = a * b / gcd(b, a);
             sb.append(gcd_ab + "\n");
         }
 
