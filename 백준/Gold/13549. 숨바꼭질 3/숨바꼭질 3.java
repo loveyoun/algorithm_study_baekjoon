@@ -15,6 +15,7 @@ public class Main {
 
     public static void main(String[] args) throws IOException {
         /** 13549_Algorithm flow_숨바꼭질 3: 최소, 최단은 BFS로 해야 시간초과 안 나잖슴 ~ ~ ~
+         *  ≒ 1697 숨바꼭질
          **/
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -38,6 +39,7 @@ public class Main {
 
     static void BFS(int unni, int count) {
         PriorityQueue<Node> pqueue = new PriorityQueue<>(((o1, o2) -> {
+            /* 4, 6 반례 처리 */
             if (o1.count == o2.count) return o1.x - o2.x;
             else return o1.count - o2.count; // 오름차순
         }));
@@ -49,6 +51,7 @@ public class Main {
             Node node = pqueue.poll();
             // == 인접 노드 탐색
             for (int i = 2; i >= 0; i--) {
+                // -1, 1 != * 2 처리 조건문
                 if (i == 2) new_x = node.x * 2;
                 else new_x = node.x + dx[i];
 
