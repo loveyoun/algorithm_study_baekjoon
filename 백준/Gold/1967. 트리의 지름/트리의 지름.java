@@ -26,15 +26,20 @@ public class Main {
             int S = Integer.parseInt(st.nextToken());
             int E = Integer.parseInt(st.nextToken());
             int V = Integer.parseInt(st.nextToken());
+
+            /** 틀렸습니다.
+             양방향으로 꼭 해주어야 한다.
+             당연!!! 랜덤 노드에 대해서 수행하면, 어디 방향에서 올지 모르니까!!!
+             **/
             arrLst[S].add(new Node(E, V));
             arrLst[E].add(new Node(S, V));
         }
 
         /**
          임의의 노드(1) 기준으로 가장 거리가 큰 값을 가진 노드 구하기.
-         : 임의의 노드를 루트 노드로 생각 -> 가장 거리가 큰 값을 가진 노드는 가장 꼬래비 일 것.
-         (가장 큰 노드를 가지거나, 가장 많은 엣지를 가진 노드)
-         왼쪽(오른쪽) 꼬래비 -> 오른쪽(왼쪽) 꼬래비 로 다시 거리 탐색.
+         : 임의의 노드를 루트 노드로 생각 -> 가장 거리가 큰 값을 가진 노드는 리프노드 중 하나 일 것.
+         (가장 큰 노드를 가지거나, 가장 많은 엣지를 가진 노드 OR both)
+         왼쪽(오른쪽) 리프 노드 -> 오른쪽(왼쪽) 리프노드 로 다시 거리 탐색.
          == 루트 노드를 새롭게 생각하는 것.
          **/
         distance = new int[N + 1];
