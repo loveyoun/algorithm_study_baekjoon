@@ -1,69 +1,88 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
-public class Main{
-    //ArrayList[] -> Edge[]
-    static ArrayList<Edge>[] A;
+public class Main {
+
+    //<Integer> -> <Edge>
+    static ArrayList<Node>[] arrLst;
     static boolean visited[];
     static int[] distance;
-    
-    public static void main(String[] args) throws IOException{
+
+    public static void main(String[] args) throws IOException {
+        /** 1067_Algorithm_트리의 지름 : 트리(BFS, 큐), 스택
+         **/
+
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         int N = Integer.parseInt(st.nextToken());
-        A = new ArrayList[N+1];
-        for(int i=1;i<N+1;i++) A[i] = new ArrayList<Edge>();
-        for(int i=0;i<N;i++){
+        arrLst = new ArrayList[N + 1];
+
+        for (int i = 1; i < N + 1; i++) arrLst[i] = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             int S = Integer.parseInt(st.nextToken());
-            while(true){
+            while (true) {
                 int E = Integer.parseInt(st.nextToken());
-                if(E == -1) break;
+                if (E == -1) break;
                 int V = Integer.parseInt(st.nextToken());
-                A[S].add(new Edge(E,V));
+                arrLst[S].add(new Node(E, V));
             }
         }
-        //index = 1 기준으로 가장 거리가 큰 값의 index구하기.
-        distance = new int[N+1];
-        visited = new boolean[N+1];
+
+        /**
+         임의의 노드(1) 기준으로 가장 거리가 큰 값을 가진 노드 구하기.
+         : 임의의 노드를 루트 노드로 생각 -> 가장 거리가 큰 값을 가진 노드는 가장 꼬래비 일 것.
+         (가장 큰 노드를 가지거나, 가장 많은 엣지를 가진 노드)
+         왼쪽(오른쪽) 꼬래비 -> 오른쪽(왼쪽) 꼬래비 로 다시 거리 탐색.
+         == 루트 노드를 새롭게 생각하는 것.
+         **/
+        distance = new int[N + 1];
+        visited = new boolean[N + 1];
         BFS(1);
-        int max = 1;
-        for(int i=2;i<N+1;i++) max = distance[max] > distance[i] ? max : i;
-        
-        distance = new int[N+1];
-        visited = new boolean[N+1];
-        BFS(max);
+        int max_idx = 1;
+        for (int i = 2; i < N + 1; i++) max_idx = distance[max_idx] > distance[i] ? max_idx : i;
+
+        distance = new int[N + 1];
+        visited = new boolean[N + 1];
+        BFS(max_idx);
+
         Arrays.sort(distance);
-        
+
         System.out.println(distance[N]);
     }
-    
-    
-    static void BFS(int index){
-        Queue<Integer> q = new LinkedList<Integer>();
-        q.add(index);
+
+    static void BFS(int index) {
+        Queue<Integer> queue = new LinkedList<>();
+
         visited[index] = true;
-        
-        while(!q.isEmpty()){
-            int now = q.poll();
-            for (Edge i : A[now]){
-                int e = i.e;
-                int v = i.value;
-                if(!visited[e]){
-                    visited[e] = true;
-                    q.add(e);
-                    distance[e] = distance[now] + v;
+        queue.add(index);
+
+        /** 여기서 계속 돌아감. **/
+        while (!queue.isEmpty()) {
+            int now = queue.poll();
+
+            // 단방향으로 하면 안되나?
+            for (Node node : arrLst[now]) {
+                int k = node.kid;
+                int v = node.value;
+                if (!visited[k]) {
+                    visited[k] = true;
+                    queue.add(k);
+                    distance[k] = distance[now] + v;
                 }
             }
         }
     }
-    
-    static class Edge{
-        int e;
-        int value;
-        public Edge(int e, int value){
-            this.e = e;
+
+    static class Node {
+        int kid, value;
+
+        public Node(int kid, int value) {
+            this.kid = kid;
             this.value = value;
         }
     }
+
 }
