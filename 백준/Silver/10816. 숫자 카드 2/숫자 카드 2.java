@@ -38,14 +38,18 @@ public class Main {
 
     private static int lowerBound(int key) {
         int start = 0;
+        /** 틀렸습니다.
+         포함하는 거니까(포함 안 해도), 없는 거면 0이 되어야 하니까. 
+         arr.length - 1
+         **/
         int end = arr.length;
 
         // lo가 hi랑 같아질 때 까지 반복
         while (start < end) {
             int mid = (start + end) / 2;
 
-            /* 시간 초과
-            1 2 2 4 4(start) 4(end) 6 7 7 9
+            /*
+            1 2 2(start, end) 4 4 4 6 7 7 9
             if (key > arr[mid]) start = mid;
             else end = mid - 1;
             */
@@ -63,15 +67,13 @@ public class Main {
         while (start < end) {
             int mid = (start + end) / 2;
 
-            /* 답 틀림
-            1(start, end) 2 2 4 4 4 6 7 7 9
-            if (key >= arr[mid]) {
-                start = mid;
-            }
+            /* 시간 초과
+            1 2 2 4 4(start) 4(end) 6 7 7 9
+            if (key >= arr[mid]) start = mid;
             // 중복원소의 경우 else 에서 처리된다.
-            else {
-                end = mid - 1;
-            }*/
+            else end = mid - 1;
+            */
+
             if (key < arr[mid]) end = mid;
             else start = mid + 1;
         }
