@@ -1,92 +1,78 @@
+/** 연습용 손코딩 **/
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+import java.util.Queue;
+import java.util.LinkedList;
 
-public class Main {
-
-    //<Integer> -> <Edge>
-    static ArrayList<Node>[] arrLst;
-    static boolean visited[];
+public class Main{
+    static int max_index, max;
+    static ArrayList<Node>[] tree;
+    // BFS
     static int[] distance;
-
-    public static void main(String[] args) throws IOException {
-        /** 1967_Algorithm_트리의 지름 : 트리(BFS, 큐), 스택
-         == 1067
-         **/
-
+    static boolean[] visited;
+    public static void main(String[] args) throws IOException{
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringTokenizer st = new StringTokenizer(br.readLine());
-        int N = Integer.parseInt(st.nextToken());
-        arrLst = new ArrayList[N + 1];
-
-        for (int i = 1; i < N + 1; i++) arrLst[i] = new ArrayList<>();
-        for (int i = 0; i < N - 1; i++) {
-            st = new StringTokenizer(br.readLine());
-            int S = Integer.parseInt(st.nextToken());
-            int E = Integer.parseInt(st.nextToken());
-            int V = Integer.parseInt(st.nextToken());
-
-            /** 틀렸습니다.
-             양방향으로 꼭 해주어야 한다.
-             당연!!! 랜덤 노드에 대해서 수행하면, 어디 방향에서 올지 모르니까!!!
-             **/
-            arrLst[S].add(new Node(E, V));
-            arrLst[E].add(new Node(S, V));
+        int N = Integer.parseInt(br.readLine());
+        // 트리 저장
+        tree = new ArrayList[N+1];
+        for(int i=0;i<=N;i++) tree[i] = new ArrayList<>();
+        for(int i=0;i<N-1;i++){
+            StringTokenizer st = new StringTokenizer(br.readLine());
+            int s = Integer.parseInt(st.nextToken());
+            int e = Integer.parseInt(st.nextToken());
+            int v = Integer.parseInt(st.nextToken());
+            tree[s].add(new Node(e, v));
+            tree[e].add(new Node(s, v));
         }
-
-        /**
-         임의의 노드(1) 기준으로 가장 거리가 큰 값을 가진 노드 구하기.
-         : 임의의 노드를 루트 노드로 생각 -> 가장 거리가 큰 값을 가진 노드는 리프노드 중 하나 일 것.
-         (가장 큰 노드를 가지거나, 가장 많은 엣지를 가진 노드 OR both)
-         왼쪽(오른쪽) 리프 노드 -> 오른쪽(왼쪽) 리프노드 로 다시 거리 탐색.
-         == 루트 노드를 새롭게 생각하는 것.
-         **/
-        distance = new int[N + 1];
-        visited = new boolean[N + 1];
+        
+        max_index = 0;
+        max = 0;
+        distance = new int[N+1];
+        visited = new boolean[N+1];
         BFS(1);
-        int max_idx = 1;
-        for (int i = 2; i < N + 1; i++) max_idx = distance[max_idx] > distance[i] ? max_idx : i;
-
-        distance = new int[N + 1];
-        visited = new boolean[N + 1];
-        BFS(max_idx);
-
-        Arrays.sort(distance);
-
-        System.out.println(distance[N]);
+        
+        max = 0;
+        distance = new int[N+1];
+        visited = new boolean[N+1];
+        BFS(max_index);
+        
+        System.out.println(max);
     }
-
-    static void BFS(int index) {
+    
+    static void BFS(int start_index){
+        // 큐 
         Queue<Integer> queue = new LinkedList<>();
-
-        visited[index] = true;
-        queue.add(index);
-
-        /** 여기서 계속 돌아감. **/
-        while (!queue.isEmpty()) {
+        
+        visited[start_index] = true;
+        queue.add(start_index);
+        
+        while(queue.size()>0){
             int now = queue.poll();
-
-            // 단방향으로 하면 안되나?
-            for (Node node : arrLst[now]) {
-                int k = node.kid;
-                int v = node.value;
-                if (!visited[k]) {
-                    visited[k] = true;
-                    queue.add(k);
-                    distance[k] = distance[now] + v;
+           
+            for(Node node:tree[now]){
+                int next = node.next;
+                if(!visited[next]){
+                    int value = node.value;
+                    visited[next] = true;
+                    queue.add(next);
+                    distance[next] = distance[now] + value;
+                    if(distance[next] > max){
+                        max = distance[next];
+                        max_index = next;
+                    }
                 }
             }
         }
     }
-
-    static class Node {
-        int kid, value;
-
-        public Node(int kid, int value) {
-            this.kid = kid;
+    
+    static class Node{
+        int next, value;
+        Node(int next, int value){
+            this.next = next;
             this.value = value;
         }
     }
-
 }
