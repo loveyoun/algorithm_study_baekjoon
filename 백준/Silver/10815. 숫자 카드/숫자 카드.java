@@ -7,14 +7,12 @@ import java.util.StringTokenizer;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        /** 10815_Algorithm_flow_숫자 카드: 이분 탐색
-         * 최적화: customized_sort()
+        /** 10815_Algorithm_flow_숫자 카드: 이분 탐색(lower bound)
          **/
 
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
-
         int N = Integer.parseInt(br.readLine());
+
         int[] sangen = new int[N];
         StringTokenizer st = new StringTokenizer(br.readLine(), " ");
         for (int i = 0; i < N; i++) sangen[i] = Integer.parseInt(st.nextToken());
@@ -25,74 +23,29 @@ public class Main {
         Arrays.sort(sangen);
 
         int M = Integer.parseInt(br.readLine());
-        int[] arr = new int[M];
-        /*Cards[] arr = new Cards[M];
-        int[] answer = new int[M];
-         */
+        int[] cards = new int[M];
         st = new StringTokenizer(br.readLine(), " ");
-        for (int i = 0; i < M; i++) {
-            arr[i] = Integer.parseInt(st.nextToken());
-            //arr[i] = new Cards(Integer.parseInt(st.nextToken()), i);
-        }
-        /*Arrays.sort(arr, new Comparator<Cards>() {
-            @Override
-            public int compare(Cards o1, Cards o2) {
-                return o1.value - o2.value;
-            }
-        });
-        */
+        for (int i = 0; i < M; i++)
+            cards[i] = Integer.parseInt(st.nextToken());
 
 
-        /** 변수 재사용
-         int start = 0; **/
-        for (int i = 0; i < M; i++) {
-            int start = 0;
-            int end = N - 1;
-            boolean flag = false;
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < cards.length; i++) {
+            int start = 0, end = N - 1;
 
-            while (start <= end) {
+            /** LOWER BOUND **/
+            while (start < end) {
                 int mid_idx = (start + end) / 2;
                 int MID = sangen[mid_idx];
 
-                if (MID < arr[i]) {
-                    start = mid_idx + 1;
-                } else if (MID > arr[i]) {
-                    /*
-                     * IndexOutOfBoundsException 일어날일 없나?
-                     * !!!없다!!!
-                     * arr ... start(mid) end -> arr ... end start 되면 while 문 탈출해서
-                     */
-                    end = mid_idx - 1;
-                } else { // 찾았을 때
-                    start = mid_idx;
-                    flag = true;
-                    break;
-                }
+                if (cards[i] <= MID) end = mid_idx;
+                else start = mid_idx + 1;
             }
-
-            if (flag) sb.append(1 + " ");
-            else sb.append(0 + " ");
-
-            /*
-            if (flag) answer[arr[i].index] = 1;
-            else answer[arr[i].index] = 0;
-            */
+            if (cards[i] == sangen[start]) sb.append("1 ");
+            else sb.append("0 ");
         }
 
-        //for(int i=0;i<M;i++) sb.append(answer[i] + " ");
         System.out.println(sb);
     }
-
-    /*
-    static class Cards {
-        int value;
-        int index;
-
-        Cards(int value, int index) {
-            this.value = value;
-            this.index = index;
-        }
-    }
-    */
 
 }
