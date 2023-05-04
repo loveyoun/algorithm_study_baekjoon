@@ -21,15 +21,15 @@ public class Main {
         std_count[std_len - 1] = std_len;
 
         int M = Integer.parseInt(br.readLine());
-        Character[] test = new Character[M];
         String test_tmp = br.readLine();
+        /*Character[] test = new Character[M];
         for (int i = 0; i < M; i++)
-            test[i] = test_tmp.charAt(i);
+            test[i] = test_tmp.charAt(i);*/
 
         int count = 0;
         int index = 0;
         for (int i = 0; i < M; i++) {
-            if (test[i] == std_str[index]) {
+            if (test_tmp.charAt(i) == std_str[index]) { // <-> test[i]
                 //if (std_count[index] == std_len) count++;
                 index += 1;
             } else {
@@ -40,7 +40,7 @@ public class Main {
                 그럼, OOIO일 때 처음에서 계속 iteration 도는데, 처리는?
                  */
                 index = 0;
-                if (std_str[index] == test[i]) i--;
+                if (std_str[index] == test_tmp.charAt(i)) i--;
             }
 
             if (index == std_len) {
