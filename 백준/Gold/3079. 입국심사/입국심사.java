@@ -2,7 +2,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.StringTokenizer;
-import java.util.Arrays;
 
 public class Main {
 
@@ -15,14 +14,18 @@ public class Main {
         N = Integer.parseInt(st.nextToken()); // 입국 심사대
         M = Integer.parseInt(st.nextToken()); // 상근이 칭구들
         immigration_time = new long[N];
-        for (int i = 0; i < N; i++) immigration_time[i] = Long.parseLong(br.readLine());
-        Arrays.sort(immigration_time);
+        long max = 0;
+        for (int i = 0; i < N; i++) {
+            immigration_time[i] = Long.parseLong(br.readLine());
+            max = Math.max(max, immigration_time[i]);
+        }
+        //Arrays.sort(immigration_time);
 
         long share = M / N;
-        // M = 2, N = 4
+        // M = 2, N = 4인 경우 한 번에 다 받을 수 있어서
         if (share == 0) share = 1;
 
-        long result = binarySearch(0, immigration_time[N - 1] * share);
+        long result = binarySearch(0, max * share);
         System.out.println(result);
     }
 
@@ -33,7 +36,7 @@ public class Main {
             for (int i = 0; i < N; i++)
                 total += mid / immigration_time[i];
 
-            //시간을 더 늘려야됨
+            // 심사를 다 마칠 수 없으니, 시간을 늘려야됨
             if (total < M) left = mid + 1;
             else right = mid;
         }
