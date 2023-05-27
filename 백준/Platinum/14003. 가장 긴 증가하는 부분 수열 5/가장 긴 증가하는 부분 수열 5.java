@@ -5,21 +5,16 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static final int MAX_LENGTH = 1000000;
+    static final int MAX_LENGTH = 1000001;
     static int N, maxLength;
     static int[] arr = new int[MAX_LENGTH];
-    static int[] fake_LIS;
-    static int[] max_len;
-    static int[] answer;
+    static int[] fake_LIS = new int[MAX_LENGTH];
+    static int[] max_len = new int[MAX_LENGTH];
+    static int[] answer = new int[MAX_LENGTH];
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-        arr = new int[N + 1];
-        fake_LIS = new int[N + 1];
-        max_len = new int[N + 1];
-        answer = new int[N + 1];
-
         StringTokenizer st = new StringTokenizer(br.readLine());
         for (int i = 1; i <= N; i++) arr[i] = Integer.parseInt(st.nextToken());
 
@@ -37,7 +32,7 @@ public class Main {
                 // 즉시 치.환.
                 fake_LIS[index] = arr[i];
 
-                // index 는 길이이자 내 값이 들어간 인덱스
+                // index 는 길이이자 내 값이 들어간 인덱스 
                 // -> 그래서 0 이 아니라 1 부터 시작했군. 0 이었어도 maxLength만 +1 해주면 됨.
                 max_len[i] = index;
             }
