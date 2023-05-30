@@ -15,11 +15,10 @@ public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         N = Integer.parseInt(br.readLine());
-
         ratio_pair = new ArrayList[N];
         for (int i = 0; i < N; i++) ratio_pair[i] = new ArrayList<>();
 
-        int divisor = 1;
+        int divisor;
         int lcm = 1;
         for (int i = 0; i < N - 1; i++) {
             StringTokenizer st = new StringTokenizer(br.readLine());
@@ -27,22 +26,24 @@ public class Main {
             int pair = Integer.parseInt(st.nextToken());
             int p = Integer.parseInt(st.nextToken());
             int q = Integer.parseInt(st.nextToken());
-            divisor = gcd(p, q);
             /* p = p / divisor; q = q / divisor; */
 
+            // 전체 lcm 구하기
             divisor = gcd(p, q);
             int small_lcm = p / divisor * q;
             divisor = gcd(lcm, small_lcm);
             lcm = small_lcm / divisor * lcm;
 
             ratio_pair[origin].add(new Ingredient(pair, p, q));
-            ratio_pair[pair].add(new Ingredient(origin, q, p));;
+            ratio_pair[pair].add(new Ingredient(origin, q, p));
         }
 
         august14 = new int[N];
         visited = new boolean[N];
+        // 끊어진 노드를 고려하여
         for (int i = 0; i < N; i++) dfs(i);
 
+        // 전체 최소공배수를 이용하여, 전체 최대공약수 구하기
         for (int i = 0; i < N; i++)
             lcm = gcd(lcm, august14[i]);
 
@@ -51,27 +52,36 @@ public class Main {
         System.out.println(sb);
     }
 
-    static void dfs(int origin) {
-        /** 위치 중요 **/
-        visited[origin] = true;
+    static void dfs(int idx) {
+        /** visited 중요 **/
+        visited[idx] = true;
 
-        for (int j = 0; j < ratio_pair[origin].size(); j++) {
-            int pair = ratio_pair[origin].get(j).pair;
+        int size = ratio_pair[idx].size();
+        for (int j = 0; j < size; j++) {
+            Ingredient origin = ratio_pair[idx].get(j);
+
+            int pair = origin.pair;
             if (!visited[pair]) {
-                int p = ratio_pair[origin].get(j).p;
-                int q = ratio_pair[origin].get(j).q;
+                int p = origin.p;
+                int q = origin.q;
 
-                if (august14[origin] != 0) {
-                    int divisor = gcd(august14[origin], p);
-                    int multiplier_4_p = august14[origin] / divisor;
-                    int multiplier_4_august14= p / divisor;
+                /* (a, b)이랑 (a, c) 재료 비율 맞춰주기
+                  a  b   d
+                  a'   c 
+                  a*a' b*a' c*a d*a'
+                 */
+                if (august14[idx] != 0) {
+                    int divisor = gcd(august14[idx], p);
+                    int multiplier_4_p = august14[idx] / divisor;
+                    int multiplier_4_august14 = p / divisor;
+                    
                     for (int i = 0; i < N; i++)
                         august14[i] = august14[i] * multiplier_4_august14;
 
                     p = p * multiplier_4_p;
                     q = q * multiplier_4_p;
                 }
-                august14[origin] = p;
+                august14[idx] = p;
                 august14[pair] = q;
 
                 dfs(pair);
@@ -81,7 +91,7 @@ public class Main {
 
     static int gcd(int a, int b) {
         if (b == 0) return a;
-            // gcd0 -> gcd1 -> ... -> gcd_base return -> ... -> return to gcd0
+        // gcd0 -> gcd1 -> ... -> gcd_base return -> ... -> return to gcd0
         else return gcd(b, a % b);
     }
 
