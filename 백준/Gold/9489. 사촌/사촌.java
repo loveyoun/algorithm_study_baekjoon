@@ -7,7 +7,7 @@ public class Main {
 
     static StringTokenizer st;
     static StringBuilder sb;
-    static int n, k, k_idx, k_siblings, p, level;
+    static int n, k, p, k_parent, result, level;
     static int[] tree, parent, level_count, level_group;
 
     public static void main(String[] args) throws IOException {
@@ -22,7 +22,7 @@ public class Main {
 
             tree = new int[n + 1]; // 루트 노드(1) ~ n번 까지, 모두 n 명
             parent = new int[n + 1];
-            /* group + level -> parent 정보로 한 번에
+            /* group + level => parent 정보로 한 번에
              level_count = new int[n + 1]; // 같은 레벨에 있는 친척 사람 수
              level_group = new int[n + 1]; // 같은 레벨에 있는 형제 그룹 수
 
@@ -33,7 +33,7 @@ public class Main {
             p = 0;
             parent[1] = p; // root
 
-            k_idx = 0;
+            k_parent = 0;
 
             st = new StringTokenizer(br.readLine());
             findCousins();
@@ -70,18 +70,18 @@ public class Main {
 
             parent[i] = p;
 
-            if (tree[i] == k) k_idx = i;
+            if (tree[i] == k) k_parent = p;
         }
 
 
-        k_siblings = 0;
+        result = 0;
         for (int i = 2; i <= n; i++) {
             int p1 = parent[i];
-            int p2 = parent[k_idx];
-            if (p1 != p2 && parent[p1] == parent[p2]) k_siblings++;
+            
+            if (p1 != k_parent && parent[p1] == parent[k_parent]) result++;
         }
 
-        sb.append(k_siblings).append("\n");
+        sb.append(result).append("\n");
     }
 
 }
