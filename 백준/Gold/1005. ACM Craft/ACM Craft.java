@@ -1,6 +1,5 @@
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.PriorityQueue;
 
 public class Main {
 
@@ -44,9 +43,7 @@ public class Main {
 
         visited[num] = true;
 
-        PriorityQueue<Integer> pq = new PriorityQueue<>((o1, o2) -> {
-            return o2 - o1;
-        });
+        int max = 0;
         for (int i = 0; i < orderLst[num].size(); i++) {
             int pre_num = orderLst[num].get(i);
 
@@ -54,10 +51,10 @@ public class Main {
             if (orderLst[pre_num].size() > 0) build(pre_num);
 
             /** 위상정렬 **/
-            pq.add(time[num] + time[pre_num]);
+            max = Math.max(max, time[num] + time[pre_num]);
         }
 
-        if (pq.size() > 0) time[num] = pq.poll();
+        time[num] = Math.max(max, time[num]);
     }
 
     static int read() throws IOException {
