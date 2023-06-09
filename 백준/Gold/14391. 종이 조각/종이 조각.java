@@ -6,8 +6,7 @@ public class Main {
 
     public static int[][] paper;
     public static int[][] sums;
-    public static int[][] xs;
-    public static int[][] ys;
+    public static int[][] xs, ys;
     public static boolean[][] visited;
     public static int N, M; // 행, 열
     public static int count, sum, result;
@@ -23,8 +22,6 @@ public class Main {
         paper = new int[N][M];
 
         sums = new int[N][M];
-        xs = new int[N][M];
-        ys = new int[N][M];
         visited = new boolean[N][M];
 
         for (int i = 0; i < N; i++) {
@@ -42,65 +39,72 @@ public class Main {
 
 
     public static void right_down(int n, int m) {
-        if (!visited[n][m]) {
-            int v = 0, h = 0;
-            for (int i = 0; i < N - n; i++) { // ex> N = 4, n = 2 -> 2, 3
-                for (int j = 0; j < M - m; j++) {
-                    // 1. 아래, 오른쪽 탐색
-                    if (i != 0) { // 세로탐색
-                        for (v = 0; v <= i; v++) { // [n][m] ~ [n+i][m] 까지 더하기
-                            if (!visited[n + v][m]) {
-                                sums[n][m] = sums[n][m] * 10 + paper[n + v][m];
-                                count++;
-                                visited[n + v][m] = true;
-                                xs[n][m] = v;
-                            } else break;
-                        }
-                    } else { // i == 0 일 때. 단독 or 가로탐색
-                        for (h = 0; h <= j; h++) { // [n][m] ~ [n][m+j] 까지 더하기
-                            if (!visited[n][m + h]) {
-                                sums[n][m] = sums[n][m] * 10 + paper[n][m + h];
-                                count++;
-                                visited[n][m + h] = true;
-                                ys[n][m] = h;
-                            } else break;
-                        }
-                    }
-
-                    // 2. 전체 종이조각 돌았을 때 max 값 업데이트
-                    if (count == N * M) iterCheck();
-
-                    // 3. 그 다음 인덱스 (오른쪽으로 한 칸씩) 재귀
-                    if ((m + 1) >= M) {
-                        if ((n + 1) < N) right_down(n + 1, 0);
-                    } else right_down(n, m + 1);
-
-                    // 4. 이 단계에서 해준거 고대로 리와인드
-                    sums[n][m] = 0;
-                    if (i != 0) { // 세로탐색
-                        for (int l = 0; l < v; l++) {
-                            count--;
-                            visited[n + l][m] = false;
-                        }
-                    } else { // 가로탐색
-                        for (int l = 0; l < h; l++) {
-                            count--;
-                            visited[n][m + l] = false;
-                        }
-                    }
-                } // 안쪽 for
-            } // 바깥 for
-        } else { // if (visited)
-            // 행 다 탐색 후, 다음 열로 돌아갈 때 : ex> (1, M - 1) ->  (2, 0)
-            if ((m + 1) >= M) {
-                if ((n + 1) < N) right_down(n + 1, 0);
-            } else right_down(n, m + 1);
+        // BASE CASE
+        if (count == N * M) {
+            iterCheck();
+            return;
         }
+
+        if (n >= 0 && n < N && m >= 0 && m < M) {
+            if (!visited[n][m]) {
+                int v, h; // 각 케이스에서 어디까지 탐색했나 확인 변수
+
+                for (int i = 1; i < N - n; i++) { // ex> N = 4, n = 2 -> 2, 3
+                    // 세로탐색
+                    for (v = 0; v <= i; v++) { // [n][m] ~ [n+i][m] 까지 더하기
+                        if (!visited[n + v][m]) {
+                            sums[n][m] = sums[n][m] * 10 + paper[n + v][m];
+                            count++;
+                            visited[n + v][m] = true;
+                        } else break;
+                    }
+
+                    // 2. 재귀
+                    if ((m + 1) >= M) right_down(n + 1, 0);
+                    else right_down(n, m + 1);
+
+                    // 3. 이 단계에서 해준거 고대로 리와인드
+                    sums[n][m] = 0;
+                    for (int l = 0; l < v; l++) {
+                        count--;
+                        visited[n + l][m] = false;
+                    }
+                }
+
+                // 단독 or 가로탐색
+                for (int j = 0; j < M - m; j++) {
+                    for (h = 0; h <= j; h++) { // [n][m] ~ [n][m+j] 까지 더하기
+                        if (!visited[n][m + h]) {
+                            sums[n][m] = sums[n][m] * 10 + paper[n][m + h];
+                            count++;
+                            visited[n][m + h] = true;
+                        } else break;
+                    }
+
+                    // 2. 재귀
+                    if ((m + 1) >= M) right_down(n + 1, 0);
+                    else right_down(n, m + 1);
+
+                    // 3. 리와인드
+                    sums[n][m] = 0;
+                    for (int l = 0; l < h; l++) {
+                        count--;
+                        visited[n][m + l] = false;
+                    }
+                }
+
+            } else { // if (visited)
+                if ((m + 1) >= M) right_down(n + 1, 0);
+                else right_down(n, m + 1);
+            }
+        }
+
     }
 
     public static void iterCheck() {
         for (int i = 0; i < N; i++)
-            for (int j = 0; j < M; j++) sum += sums[i][j];
+            for (int j = 0; j < M; j++)
+                sum += sums[i][j];
 
         result = Math.max(result, sum);
 
