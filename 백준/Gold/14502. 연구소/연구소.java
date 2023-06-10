@@ -26,7 +26,7 @@ public class Main {
 
         lab = new int[N][M];
         vi_visited = new boolean[N][M];
-        virus = new ArrayList<>();
+        //virus = new ArrayList<>();
         for (int i = 0; i < N; i++) {
             st = new StringTokenizer(br.readLine());
             for (int j = 0; j < M; j++) {
@@ -34,7 +34,7 @@ public class Main {
                 if (lab[i][j] == 0) safety_z++; // 한 iteration 후, 안전 지역을 카운트하는 이중 for 문 대신 사용
                 if (lab[i][j] == 2) {
                     vi_visited[i][j] = true; // 전염시킨 바이러스 라는 표시
-                    virus.add(new Point(i, j));
+                    //virus.add(new Point(i, j));
                 }
             }
         }
@@ -97,7 +97,15 @@ public class Main {
         queue = new LinkedList<>();
 
         // 기존 바이러스 구역으로 초기화
-        for (Point point : virus) queue.add(point);
+        //for (Point point : virus) queue.add(point);
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < M; j++) {
+                if (lab[i][j] == 2) {
+                    vi_visited[i][j] = true;
+                    queue.add(new Point(i, j));
+                }
+            }
+        }
 
         // queue 에 기존 바이러스 구역을 다 넣고, 전염시키면 된다.
         // 어차피 한 iteration 당 BFS 한 번만 도니까
