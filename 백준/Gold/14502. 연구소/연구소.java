@@ -1,144 +1,115 @@
 import java.io.BufferedReader;
-import java.io.IOException;
+import java.io.BufferedWriter;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.io.OutputStreamWriter;
 import java.util.StringTokenizer;
 
 public class Main {
+    static int lab[][];
+    static int height, width, safety_zone, tmp_safety, border, answer = 0;
+    static int[] dx = {-1, 0, 1, 0};
+    static int[] dy = {0, 1, 0, -1};
 
-    static int N, M, safety_z, tmp_safe_z, max, wallCount;
-    static int[][] lab;
-    static boolean[][] vi_visited;
-    static int[] dx = {0, -1, 0, 1};
-    static int[] dy = {-1, 0, 1, 0};
-    static ArrayList<Point> virus;
-    static Queue<Point> queue;
-
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken());
-        M = Integer.parseInt(st.nextToken());
-        safety_z = -3; // 벽 미리 카운트
+        height = Integer.parseInt(st.nextToken());
+        width = Integer.parseInt(st.nextToken());
+        lab = new int[height][width];
 
-        lab = new int[N][M];
-        vi_visited = new boolean[N][M];
-        //virus = new ArrayList<>();
-        for (int i = 0; i < N; i++) {
+        safety_zone = -3;
+        for (int i = 0; i < height; i++) {
             st = new StringTokenizer(br.readLine());
-            for (int j = 0; j < M; j++) {
-                lab[i][j] = Integer.parseInt(st.nextToken());
-                if (lab[i][j] == 0) safety_z++; // 한 iteration 후, 안전 지역을 카운트하는 이중 for 문 대신 사용
-                if (lab[i][j] == 2) {
-                    vi_visited[i][j] = true; // 전염시킨 바이러스 라는 표시
-                    //virus.add(new Point(i, j));
-                }
+            for (int j = 0; j < width; j++) {
+                int type = Integer.parseInt(st.nextToken());
+                if (type == 0) safety_zone++;
+                lab[i][j] = type;
             }
         }
 
-
-        max = 0;
-        wallCount = 0;
+        border = 3;
         makeWall();
 
-        System.out.println(max);
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+        bw.write(answer + "");
+        bw.flush();
+        bw.close();
     }
 
-    static void makeWall() {
-        // 첫 번째 벽
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                if (lab[i][j] == 0) {
-                    lab[i][j] = 1;
+    private static void makeWall() {
+        int size = height * width;
 
-                    // 두 번째 벽
-                    for (int x = i; x < N; x++) {
-                        int y = 0;
-                        if (x == i) y = j + 1;
+        for (int fst = 0; fst < size - 2; fst++) {
+            int fst_w = lab[fst / width][fst % width];
+            if ((fst_w == 0) || ((fst_w > 2) && (fst_w < border)))
+                lab[fst / width][fst % width] = 1;
+            else continue;
 
-                        while (y < M) {
-                            if (lab[x][y] == 0) {
-                                lab[x][y] = 1;
+            for (int snd = fst + 1; snd < size - 1; snd++) {
+                int snd_w = lab[snd / width][snd % width];
+                if ((snd_w == 0) || ((snd_w > 2) && (snd_w < border)))
+                    lab[snd / width][snd % width] = 1;
+                else continue;
 
-                                //세 번째 벽
-                                for (int n = x; n < N; n++) {
-                                    int m = 0;
-                                    if (n == x) m = y + 1;
+                for (int trd = snd + 1; trd < size; trd++) {
+                    int trd_w = lab[trd / width][trd % width];
+                    if ((trd_w == 0) || ((trd_w > 2) && (trd_w < border)))
+                        lab[trd / width][trd % width] = 1;
+                    else continue;
 
-                                    while (m < M) {
-                                        if (lab[n][m] == 0) {
-                                            lab[n][m] = 1;
+                    tmp_safety = safety_zone;
 
-                                            vi_visited = new boolean[N][M];
-                                            tmp_safe_z = safety_z;
-                                            BFS();
-                                            max = Math.max(max, tmp_safe_z);
+                    infect();
 
-                                            lab[n][m] = 0;
-                                        }
-                                        m++;
-                                    } /* m = 0; 무한루프 */
-                                } // 세 번째 벽
-                                lab[x][y] = 0;
-                            }
-                            y++;
-                        } /* y = 0; 무한루프 */
-                    } // 두 번째 벽
-                    lab[i][j] = 0;
+                    border++;
+                    lab[trd / width][trd % width] = 0;
                 }
-            } // 첫 번째 벽
+                lab[snd / width][snd % width] = 0;
+            }
+            lab[fst / width][fst % width] = 0;
         }
     }
 
-    static void BFS() {
-        queue = new LinkedList<>();
+    private static void infect() {
+        for (int x = 0; x < height; x++) {
+            for (int y = 0; y < width; y++)
+                if (lab[x][y] == 2) DFS(x, y);
+        }
+        
+        /**
+        int result = 0;
+        for (int x = 0; x < height; x++) {
+            for (int y = 0; y < width; y++) {
+                if (lab[x][y] == 0) result++;
+                else if (lab[x][y] == 3) lab[x][y] = 0;
+            }
+        }
+         **/
 
-        // 기존 바이러스 구역으로 초기화
-        //for (Point point : virus) queue.add(point);
-        for (int i = 0; i < N; i++) {
-            for (int j = 0; j < M; j++) {
-                if (lab[i][j] == 2) {
-                    vi_visited[i][j] = true;
-                    queue.add(new Point(i, j));
+        answer = Math.max(answer, tmp_safety);
+    }
+
+    private static void DFS(int x, int y) {
+        for (int i = 0; i < 4; i++) {
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+            
+            if (isVaildPos(nx, ny)) {
+                int zone = lab[nx][ny];
+                if ((zone == 0) || ((zone > 2) && (zone < border))) {
+                    lab[nx][ny] = border;
+                    tmp_safety--;
+
+                    DFS(nx, ny);
+
+                    /*lab[nx][ny] = 0;*/
                 }
             }
         }
-
-        // queue 에 기존 바이러스 구역을 다 넣고, 전염시키면 된다.
-        // 어차피 한 iteration 당 BFS 한 번만 도니까
-        while (!queue.isEmpty()) {
-            Point now = queue.poll();
-            int x = now.x;
-            int y = now.y;
-
-            for (int k = 0; k < 4; k++) {
-                int new_x = x + dx[k];
-                int new_y = y + dy[k];
-
-                if (new_x >= 0 && new_x < N && new_y >= 0 && new_y < M) {
-                    if (lab[new_x][new_y] == 0 && !vi_visited[new_x][new_y]) {
-                        vi_visited[new_x][new_y] = true;
-                        /* lab[new_x][new_y] = 2; */
-                        tmp_safe_z--;
-
-                        queue.add(new Point(new_x, new_y));
-                    }
-                }
-            } // 동서남북 탐색
-        }
-
     }
 
-    static class Point {
-        int x, y;
-
-        Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
+    private static boolean isVaildPos(int x, int y) {
+        return (x >= 0 && x < height && y >= 0 && y < width);
     }
 
 }
