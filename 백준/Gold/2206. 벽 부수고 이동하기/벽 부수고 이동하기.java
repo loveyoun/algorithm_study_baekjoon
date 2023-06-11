@@ -1,4 +1,6 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
@@ -6,27 +8,20 @@ import java.util.StringTokenizer;
 public class Main {
 
     static int N, M;
-    static int[][] map, nb_path, yb_path; // no_broken_path & yes_broken_path
-    static boolean[][] nb_visited, yb_visited;
-    static boolean isPossible;
-    static int result;
+    static int[][] map;
+    static boolean[][] org_visited, brk_visited;
     static int[] dx = {0, -1, 0, 1};
     static int[] dy = {-1, 0, 1, 0};
 
     public static void main(String[] args) throws IOException {
-        /** 2206_Algorithm_벽 부수고 이동하기 :
-         **/
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-
         StringTokenizer st = new StringTokenizer(br.readLine());
         N = Integer.parseInt(st.nextToken());
         M = Integer.parseInt(st.nextToken());
 
-        nb_visited = new boolean[N][M];
-        yb_visited = new boolean[N][M];
         map = new int[N][M];
-        nb_path = new int[N][M];
-        yb_path = new int[N][M];
+        org_visited = new boolean[N][M];
+        brk_visited = new boolean[N][M];
         for (int i = 0; i < N; i++) {
             String tmp = br.readLine();
             for (int j = 0; j < M; j++)
@@ -34,100 +29,64 @@ public class Main {
         }
 
 
-        isPossible = false;
-        nb_path[0][0] = 1;
-        result = 1;
-
-        BFS(0, 0, result, false);
-        if (N == 1 && M == 1) isPossible = true;
-
-        if (yb_path[N - 1][M - 1] == 0) result = nb_path[N - 1][M - 1];
-        else if (nb_path[N - 1][M - 1] == 0) result = yb_path[N - 1][M - 1];
-        else result = Math.min(nb_path[N - 1][M - 1], yb_path[N - 1][M - 1]);
-
-        if (isPossible) System.out.println(result);
-        else System.out.println(-1);
+        if (N == 1 && M == 1) System.out.println(1);
+        else System.out.println(BFS(0, 0, 1, false));
     }
 
-    static void BFS(int x, int y, int path, boolean broke) {
+    static int BFS(int x, int y, int path, boolean broke) {
+        /** path 를 인자로 넘기거나, 배열에 저장할 수도 있다 **/
+
         Queue<Point> queue = new LinkedList<>();
 
         queue.add(new Point(x, y, path, broke));
-        nb_visited[x][y] = true;
+        org_visited[x][y] = true;
 
         while (!queue.isEmpty()) {
             Point now = queue.poll();
             int cur_x = now.x;
             int cur_y = now.y;
-            int cur_path = now.path;
+            int cur_path = now.path; // 현재까지 거리
+
+            // Break Point
+            if (cur_x == N - 1 && cur_y == M - 1)
+                return cur_path;
 
             for (int i = 0; i < 4; i++) {
                 int new_x = cur_x + dx[i];
                 int new_y = cur_y + dy[i];
-                boolean isBroken = now.broke;
+                boolean isBroken = now.broken;
 
-                if (new_x >= 0 && new_x < N && new_y >= 0 && new_y < M) {
-                    if (isBroken) {
-                        if (!yb_visited[new_x][new_y]) {
-                            yb_visited[new_x][new_y] = true;
+                if (new_x < 0 || new_x >= N || new_y < 0 || new_y >= M) continue;
 
-                            if (new_x == N - 1 && new_y == M - 1) {
-                                isPossible = true;
-                                yb_path[new_x][new_y] = cur_path + 1;
-                                //break;
-                            }
-
-                            if (map[new_x][new_y] == 1)
-                                if (isBroken) continue;
-
-                            yb_path[new_x][new_y] = cur_path + 1;
-                            queue.add(new Point(new_x, new_y, cur_path + 1, isBroken));
-                        }
-                    } else {
-                        if (!nb_visited[new_x][new_y]) {
-                            //visited[new_x][new_y] = true;
-                            nb_visited[new_x][new_y] = true;
-                            yb_visited[new_x][new_y] = true;
-
-                            /*
-                             끝에 오기도 전에 무한루프에 빠질 수 있다. 경로가 없는 경우에도 무조건 무한루프.
-                             이게 break point가 되지는 않는다.
-                            */
-                            if (new_x == N - 1 && new_y == M - 1) {
-                                isPossible = true;
-                                nb_path[new_x][new_y] = cur_path + 1;
-                            }
-
-                            if (map[new_x][new_y] == 1) {
-                                if (isBroken) {
-                                    //visited[new_x][new_y] = true;
-                                    continue;
-                                } else isBroken = true;
-                            }
-
-                            //if (!isBroken) nb_visited[new_x][new_y] = true;
-
-                            //if (cur_path + 1 < nb_path[new_x][new_y]) {
-                            nb_path[new_x][new_y] = cur_path + 1;
-                            queue.add(new Point(new_x, new_y, cur_path + 1, isBroken));
-                        }
-                    }
+                // 벽 뚫은 경우
+                if (isBroken) {
+                    if (map[new_x][new_y] == 1) continue;
+                    if (brk_visited[new_x][new_y]) continue;
                 }
-            }
+                // 뚫지 않은 루트
+                if (!isBroken) {
+                    if (org_visited[new_x][new_y]) continue;
+                    org_visited[new_x][new_y] = true;
+                    if (map[new_x][new_y] == 1) isBroken = true;
+                }
 
-            if (isPossible) break;
-        }
+                brk_visited[new_x][new_y] = true; // 벽을 안 뚫어도 정상적으로 미리 도착한게 더 빠르니까
+                queue.add(new Point(new_x, new_y, cur_path + 1, isBroken)); /** 항상 visited 여부 조심! **/
+            } // 4 방위 탐색
+        } // while (queue)
+
+        return -1;
     }
 
     static class Point {
         int x, y, path;
-        boolean broke;
+        boolean broken;
 
-        Point(int x, int y, int path, boolean broke) {
+        Point(int x, int y, int path, boolean broken) {
             this.x = x;
             this.y = y;
             this.path = path;
-            this.broke = broke;
+            this.broken = broken;
         }
     }
 
