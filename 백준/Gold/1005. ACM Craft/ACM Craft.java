@@ -54,7 +54,7 @@ public class Main {
             max = Math.max(max, time[num] + time[pre_num]);
         }
 
-        time[num] = Math.max(max, time[num]);
+        time[num] = Math.max(max, time[num]); /** 모두 0 일 때 조심 **/
     }
 
     static int read() throws IOException {
