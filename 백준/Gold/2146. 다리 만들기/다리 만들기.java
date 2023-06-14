@@ -7,10 +7,7 @@ public class Main {
     static int[] dx = {-1, 0, 1, 0};
     static int[] dy = {0, 1, 0, -1};
     static int N, Is, min;
-    static int[][] nation;
-    //static boolean[][] visited;
-    //static int[][] occupied;
-    static int[][] dist;
+    static int[][] nation, dist;
     static Queue<int[]> int_que;
     static Queue<Bridge> brg_queue = new LinkedList<>();
 
@@ -18,8 +15,7 @@ public class Main {
         N = read();
         nation = new int[N][N];
         for (int i = 0; i < N; i++) {
-            for (int j = 0; j < N; j++)
-                nation[i][j] = read(); //st.nextToken().charAt(0); /*br.readLine().split(" ").toString().toCharArray();*/
+            for (int j = 0; j < N; j++) nation[i][j] = read();
         }
 
         // 섬 나누기
@@ -31,8 +27,7 @@ public class Main {
             }
         }
 
-        // 다리 놓기 4방향 계속 진행 dfs
-        // bfs? min 값 업데이트
+        // 다리 놓기
         min = Integer.MAX_VALUE;
         dist = new int[N][N];
         setBridge();
@@ -45,7 +40,7 @@ public class Main {
 
         nation[x][y] = ++Is;
         int_que.add(new int[]{x, y});
-        brg_queue.add(new Bridge(x, y,  Is));
+        brg_queue.add(new Bridge(x, y, Is));
 
         while (!int_que.isEmpty()) {
             int[] node = int_que.poll();
@@ -55,13 +50,14 @@ public class Main {
             for (int k = 0; k < 4; k++) {
                 int new_x = now_x + dx[k];
                 int new_y = now_y + dy[k];
-
                 if (new_x < 0 || new_x >= N || new_y < 0 || new_y >= N) continue;
-                if (nation[new_x][new_y] != 1) continue;  // 0 이거나 섬 번호 지정되었으면
+
+                // 0 이거나 섬 번호(2 ~ ) 지정되었으면
+                if (nation[new_x][new_y] != 1) continue;
 
                 nation[new_x][new_y] = Is;
                 int_que.add(new int[]{new_x, new_y});
-                brg_queue.add(new Bridge(new_x, new_y,  Is));
+                brg_queue.add(new Bridge(new_x, new_y, Is)); // 다리 노드들만 따로 모아놓기
             }
         }
     }
@@ -80,7 +76,7 @@ public class Main {
                 if (new_x < 0 || new_x >= N || new_y < 0 || new_y >= N) continue;
                 int num = nation[new_x][new_y];
 
-                // 이미 다리 놨거나 같은 섬이면
+                // 이미 내 섬이 다리 놨거나 같은 섬이면
                 if (num == IsNum) continue;
 
                 // 바다나 다른 섬 만날 때
