@@ -31,15 +31,14 @@ public class Main {
 
 
             int toWin = read();
-            build(toWin);
-            sb.append(time[toWin] + "\n");
+            sb.append(build(toWin) + "\n");
         }
 
         System.out.println(sb);
     }
 
-    static void build(int num) {
-        if (visited[num]) return;
+    static int build(int num) {
+        if (visited[num] || orderLst[num].size() == 0) return time[num];
 
         visited[num] = true;
 
@@ -47,14 +46,11 @@ public class Main {
         for (int i = 0; i < orderLst[num].size(); i++) {
             int pre_num = orderLst[num].get(i);
 
-            // 전 단계 꺼 업데이트 다 한 후에,
-            if (orderLst[pre_num].size() > 0) build(pre_num);
-
             /** 위상정렬 **/
-            max = Math.max(max, time[num] + time[pre_num]);
+            max = Math.max(max, time[num] + build(pre_num));
         }
 
-        time[num] = Math.max(max, time[num]); /** 모두 0 일 때 조심 **/
+        return time[num] = Math.max(max, time[num]);
     }
 
     static int read() throws IOException {
