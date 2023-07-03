@@ -1,42 +1,36 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class Main {
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         int N = Integer.parseInt(br.readLine());
 
-        PriorityQueue<int[]> queue = new PriorityQueue<>((o1, o2) -> {
-            //if (o1[0] == o2[0]) return o1[1] - o2[1];
-            return o1[0] - o2[0];   // 시작 시간 오름차순
-        });
+        int[][] queue = new int[N][2];
         for (int i = 0; i < N; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine());
-            queue.add(new int[]{Integer.parseInt(st.nextToken()), Integer.parseInt(st.nextToken())});
+            StringTokenizer st = new StringTokenizer(br.readLine(), " ");
+            queue[i][0] = Integer.parseInt(st.nextToken());
+            queue[i][1] = Integer.parseInt(st.nextToken());
+        }
+
+        Arrays.sort(queue, ((x, y) -> x[0] - y[0]));    // 시작 시간 오름차순. 넣을 때마다(PriorityQueue)가 아닌, 한 번에 정렬
+
+        PriorityQueue<int[]> rooms = new PriorityQueue<>((x, y) -> x[1] - y[1]);   // 끝나는 시간 오름차순
+
+
+        rooms.offer(queue[0]);
+        for (int i = 1; i < N; i++) {
+            if (!rooms.isEmpty() && rooms.peek()[1] <= queue[i][0]) rooms.poll();
+
+            rooms.offer(queue[i]);
         }
 
 
-        PriorityQueue<int[]> rooms = new PriorityQueue<>((o1, o2) -> {
-            //if (o1[1] == o2[1]) return o1[0] - o2[0];
-            return o1[1] - o2[1];   // 끝나는 시간 오름차순
-        });
-
-        int result = 0;
-        rooms.add(queue.poll());
-        while (!queue.isEmpty()) {
-            int[] q = queue.poll();
-            if (!rooms.isEmpty() && rooms.peek()[1] <= q[0]) rooms.poll();
-            rooms.add(q);
-
-            result = Math.max(result, rooms.size());
-        }
-
-
-        System.out.println(result);
+        System.out.println(rooms.size());
     }
 
 }
