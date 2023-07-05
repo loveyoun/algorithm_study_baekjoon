@@ -5,51 +5,49 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int n, min = Integer.MAX_VALUE;
-    static int[][] city;
-    static boolean[] visited;
+    static final int INF = 16000000 + 1;
+    static int N;
+    static int[][] costs;
+    static int[][] DP;
 
     public static void main(String[] args) throws IOException {
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        n = Integer.parseInt(br.readLine());
+        /** 2098_Algorithm_flow_외판원 순회: DP, 비트마스킹, TSP
+         **/
 
-        city = new int[n + 1][n + 1];
-        for (int i = 1; i <= n; i++) {
-            StringTokenizer st = new StringTokenizer(br.readLine(), " ");
-            for (int j = 1; j <= n; j++)
-                city[i][j] = Integer.parseInt(st.nextToken());
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        N = Integer.parseInt(br.readLine());
+
+        StringTokenizer st;
+        costs = new int[N][N];
+        for (int i = 0; i < N; i++) {
+            st = new StringTokenizer(br.readLine(), " ");
+            for (int j = 0; j < N; j++)
+                costs[i][j] = Integer.parseInt(st.nextToken());
         }
 
+        DP = new int[N][(1 << N) - 1];
+        for (int i = 0; i < N; i++) {
+            for (int j = 0; j < (1 << N) - 1; j++)
+                DP[i][j] = INF;
+        } //Arrays.fill(DP[i], INF);
 
-        visited = new boolean[n + 1];
-
-        // 순회 : 어디에서 출발해서 n개 다 돈 후 최소값 비교
-        TSP(1, 0, 0);
-
-        System.out.println(min);
+        System.out.println(TSP(0, 1));
     }
 
-    static void TSP(int via, int cost, int count) {
-        // BASE CASE
-        if (count == n - 1) {
-            if (city[via][1] != 0) min = Math.min(min, cost + city[via][1]);
-            return;
+    static int TSP(int city, int visited) {
+        // 1) 다 방문했을 때 (BASE CASE)
+        if (visited == (1 << N) - 1)
+            return costs[city][0] == 0 ? INF : costs[city][0];
+        // 2) 이미 방문한 노드
+        if (DP[city][visited] != INF)
+            return DP[city][visited];
+        // 3) 방문 가능 도시 (not visited, cost 있으면)
+        for (int i = 0; i < N; i++) {
+            if ((visited & (1 << i)) == 0 && costs[city][i] != 0)
+                DP[city][visited] = Math.min(DP[city][visited], TSP(i, (visited | (1 << i))) + costs[city][i]);
         }
 
-        // DFS: 꼬리잡기, BFS: 어깨동무
-        /* 오류
-           1 -> 2 -> 1 일 때
-         */
-        for (int to = 2; to <= n; to++) {
-            if (visited[to] || city[via][to] == 0) continue;
-
-            visited[to] = true;
-
-            TSP(to, cost + city[via][to], count + 1);
-
-            visited[to] = false;
-        }
-
+        return DP[city][visited];
     }
 
 }
