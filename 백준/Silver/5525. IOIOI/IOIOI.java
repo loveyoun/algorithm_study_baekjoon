@@ -7,49 +7,45 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
         StringTokenizer st = new StringTokenizer(br.readLine());
+        int n = Integer.parseInt(st.nextToken());
 
-        int N = Integer.parseInt(st.nextToken());
-        Character[] std_str = new Character[2 * N + 1];
-        int std_len = std_str.length;
-        int[] std_count = new int[std_len];
-        for (int i = 0; i < std_len - 1; i++) {
-            if (i % 2 == 0) std_str[i] = 'I';
-            else std_str[i] = 'O';
-            std_count[i] = i + 1;
+        Character[] ptr = new Character[2 * n + 1];
+        int ptrlen = ptr.length;
+        for (int i = 0; i < ptrlen - 1; i++) {
+            if (i % 2 == 0) ptr[i] = 'I';
+            else ptr[i] = 'O';
         }
-        std_str[std_len - 1] = 'I';
-        std_count[std_len - 1] = std_len;
+        ptr[ptrlen - 1] = 'I';
 
-        int M = Integer.parseInt(br.readLine());
-        String test_tmp = br.readLine();
-        /*Character[] test = new Character[M];
-        for (int i = 0; i < M; i++)
-            test[i] = test_tmp.charAt(i);*/
+        int m = Integer.parseInt(br.readLine());
+        String text = br.readLine();
+        //for (int i = 0; i < m; i++) Character[] ptr[i] = text.charAt(i);
 
-        int count = 0;
-        int index = 0;
-        for (int i = 0; i < M; i++) {
-            if (test_tmp.charAt(i) == std_str[index]) { // <-> test[i]
-                //if (std_count[index] == std_len) count++;
-                index += 1;
-            } else {
-                /* 다를 떄
-                IOI -> IOIIOI 일 때
-                4번 째 I에서 넘어가면 안됨.
-                i--;
+
+        int result = 0, j = 0;
+        for (int i = 0; i < m; i++) {
+            if (ptr[j] == text.charAt(i)) { // 일치
+                if (++j == ptrlen) {
+                    j = ptrlen - 2;
+                    result++;
+                }
+            } else { // 불일치
+                j = 0;
+                
+                /* 
+                IOI'I'OI 일 때, 4번째 I에서 무시하면 안 됨. 새 시작점이 될 수 있다.
+                  I'O'I
+                   'I'OI
                 그럼, OOIO일 때 처음에서 계속 iteration 도는데, 처리는?
                  */
-                index = 0;
-                if (std_str[index] == test_tmp.charAt(i)) i--;
+                //if (ptr[j] == text.charAt(i)) i--;
+                if (text.charAt(i) == 'I') i--;
             }
 
-            if (index == std_len) {
-                index = std_len - 2;
-                count++;
-            }
         }
 
-        bw.write(count + "\n");
+
+        bw.write(result + "\n");
         br.close();
         bw.flush();
         bw.close();
