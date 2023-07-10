@@ -8,6 +8,7 @@ public class Main {
     static int n;
     static ArrayList<Integer>[] tree;
     static int[] parent, level;
+    static boolean[] visited;
     static StringBuilder sb = new StringBuilder();
 
     public static void main(String[] args) throws Exception {
@@ -40,17 +41,18 @@ public class Main {
                 if (parent[i] == 0) root = i;
 
             level = new int[n + 1];
-            checkLevel(root, 1);
+            //checkLevel(root, 1);
 
-
-            sb.append(findAnc(u, v)).append("\n");
+            //sb.append(findAnc1(u, v)).append("\n");
+            visited = new boolean[n + 1];
+            sb.append(findAnc2(root, u, v)).append("\n");
         }
 
 
-        System.out.println(sb);
+        System.out.print(sb);
     }
 
-    static int findAnc(int u, int v) {
+    static int findAnc1(int u, int v) {
         int dif = level[u] - level[v];
 
         if (dif > 0) for (int i = 0; i < dif; i++) u = parent[u];
@@ -62,6 +64,20 @@ public class Main {
         }
 
         return u;
+    }
+
+    static int findAnc2(int r, int u, int v) {
+        while (u != r) {
+            visited[u] = true;
+            u = parent[u];
+        }
+        visited[r] = true;
+        while (!visited[v]) {
+            visited[v] = true;
+            v = parent[v];
+        }
+
+        return v;
     }
 
     static void checkLevel(int r, int l) {
