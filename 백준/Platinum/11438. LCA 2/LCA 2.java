@@ -9,8 +9,8 @@ import java.util.StringTokenizer;
 public class Main {
 
     static ArrayList<Integer>[] tree;
-    static int[] depth;
-    static int kmax;
+    static int[] level;
+    static int row = 0;
     static int[][] parent;
     static boolean[] visited;
     static StringBuilder sb = new StringBuilder();
@@ -30,21 +30,15 @@ public class Main {
             tree[e].add(s);
         }
 
-        depth = new int[N + 1];
+        level = new int[N + 1];
         visited = new boolean[N + 1];
-        int temp = 1;
-        kmax = 0;
-        while (temp <= N) { // 최대 가능 Depth 구하기
-            temp <<= 1;
-            kmax++;
-        }
-
-        parent = new int[kmax + 1][N + 1];
+        //int temp = 1; while (temp <= N) { temp <<= 1; row++; }
+        while ((1 << row) < (N - 1)) row++; // 최대 가능 Depth 구하기
+        parent = new int[row + 1][N + 1];
         BFS(1);
-        for (int k = 1; k <= kmax; k++) {
-            for (int n = 1; n <= N; n++) {
+        for (int k = 1; k <= row; k++) {
+            for (int n = 1; n <= N; n++)
                 parent[k][n] = parent[k - 1][parent[k - 1][n]];
-            }
         }
 
 
@@ -54,63 +48,63 @@ public class Main {
             int a = Integer.parseInt(st.nextToken());
             int b = Integer.parseInt(st.nextToken());
 
-            sb.append(excuteLCA(a, b)).append("\n");
+            sb.append(lca(a, b)).append("\n");
         }
 
-        System.out.println(sb);
+        System.out.print(sb);
     }
 
-    static int excuteLCA(int a, int b) {
-        if (depth[a] > depth[b]) { // b가 더 아래
+    static int lca(int a, int b) {
+        if (level[a] > level[b]) { // b가 더 아래
             int temp = a;
             a = b;
             b = temp;
         }
-        for (int k = kmax; k >= 0; k--) {// depth 빠르게 맞춰주기
-            if (Math.pow(2, k) <= depth[b] - depth[a]) {
-                if (depth[a] <= depth[parent[k][b]])
-                    b = parent[k][b];
+
+        for (int r = row; r >= 0; r--) { // level 빠르게 맞춰주기
+            if (Math.pow(2, r) <= level[b] - level[a])  //if (level[a] <= level[parent[r][b]])
+                b = parent[r][b];
+        }
+        for (int r = row; r >= 0 && a != b; r--) { // 조상 빠르게 찾기
+            if (parent[r][a] != parent[r][b]) {
+                a = parent[r][a];
+                b = parent[r][b];
             }
         }
-        for (int k = kmax; k >= 0 && a != b; k--) { // 조상 빠르게 찾기
-            if (parent[k][a] != parent[k][b]) {
-                a = parent[k][a];
-                b = parent[k][b];
-            }
-        }
 
 
-        int LCA = a;
-        if (a != b) LCA = parent[0][LCA];
-
-        return LCA;
+        if (a != b) a = parent[0][a];
+        return a;
     }
 
 
     private static void BFS(int node) {
-        Queue<Integer> queue = new LinkedList<Integer>();
+        Queue<Integer> queue = new LinkedList<>();
+
         queue.add(node);
         visited[node] = true;
-        int level = 1;
-        int now_size = 1;
-        int count = 0;
+
+        int lev = 1, desc = 1, cnt = 0;
         while (!queue.isEmpty()) {
-            int now_node = queue.poll();
-            for (int next : tree[now_node]) {
-                if (!visited[next]) {
-                    visited[next] = true;
-                    queue.add(next);
-                    parent[0][next] = now_node; // 부모 노드 저장
-                    depth[next] = level; // 노드 depth 저장
-                }
+            int now = queue.poll();
+            for (int next : tree[now]) {
+                if (visited[next]) continue;
+
+                visited[next] = true;
+                queue.add(next);
+
+                parent[0][next] = now; // 부모와
+                level[next] = lev;     // 레벨 저장
             }
-            count++;
-            if (count == now_size) {
-                count = 0;
-                now_size = queue.size();
-                level++;
+
+            cnt++;
+            if (cnt == desc) {
+                cnt = 0;
+                desc = queue.size(); // 다음 세대
+                lev++;
             }
         }
+
     }
 
 }
