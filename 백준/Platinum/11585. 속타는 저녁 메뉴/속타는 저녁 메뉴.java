@@ -24,13 +24,15 @@ public class Main {
 
 
         int result = kmp();
-        int divisor = gcd(n, result);
 
         StringBuilder sb = new StringBuilder();
-        sb.append(result / divisor);
-        sb.append('/');
-        sb.append(n / divisor);
+//        int divisor = gcd(n, result);
+//        sb.append(result / divisor);
+//        sb.append('/');
+//        sb.append(n / divisor);
+        
 
+        sb.append("1/" + n / result);
         System.out.print(sb);
     }
 
