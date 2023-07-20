@@ -8,18 +8,17 @@ public class Main {
     static Item[] its;
 
     public static void main(String[] args) throws IOException {
-        n = read();  // 물건 개수
-        k = read();  // 감당 무게
+        n = read();   // 물건 개수
+        k = read();   // 감당 무게
 
-        dp = new int[k + 1][n + 1];  // [weight][index]
-
+        dp = new int[k + 1][n + 1];   // [weight][index]
         its = new Item[n + 1];
         for (int i = 0; i < n; i++) {
             int w = read();
             int v = read();
 
             its[i] = new Item(w, v);
-            //dp[w] = Math.max(dp[w], v);
+            /*dp[w] = Math.max(dp[w], v);*/
         }
         its[n] = new Item(0, 0);
         Arrays.sort(its); /***/
@@ -30,7 +29,9 @@ public class Main {
         System.out.println(result);
     }
 
-//    static void dfs() {  // Bottom - up
+
+    /** 3) Bottom - up **/
+//    static void dfs() {
 //        for (int i = 0; i < n; i++) {
 //            int weight = read(), value = read();
 //
@@ -41,14 +42,26 @@ public class Main {
 //        //System.out.println(dp[k]);
 //    }
 
-    static void dfs(int idx, int weight) {  // Bottom - up  //its[n] = new Item(0, 0);
+    /**
+     * 1) Bottom - up
+     **/
+    static void dfs(int idx, int weight) {  //its[n] = new Item(0, 0);
+        int w = dp[weight][idx];
         for (int i = idx + 1; i <= n; i++) {
             int sum = weight + its[i].w;
-            if (sum > k) break;
+            if (sum > k) break;  // continue; 정렬을 하지 않으면 뒤에 것들은 다 크지 않다
 
-            if (dp[sum][i] >= dp[weight][idx] + its[i].v) continue;
+            int new_value = w + its[i].v;
 
-            dp[sum][i] = dp[weight][idx] + its[i].v;
+            if (dp[sum][i] >= new_value) continue;
+
+            if (dp[sum][i - 1] >= new_value) {
+                dp[sum][i] = dp[sum][i - 1];
+                continue;
+            }
+
+
+            dp[sum][i] = new_value;
             result = Math.max(result, dp[sum][i]);
 
             dfs(i, sum);
@@ -57,7 +70,7 @@ public class Main {
     }
 
 
-//    static void dfs(int idx, int weight) {  //its[n] = new Item(0, 0);
+//    static void fail(int idx, int weight) {  //its[n] = new Item(0, 0);
 //        for (int i = idx + 1; i <= n; i++) {
 //            int sum = weight + its[i].w;
 //            if (sum > k) break;      // 어차피 뒤에 것들은 다 크니까
@@ -76,7 +89,7 @@ public class Main {
 //    }
 
 
-//    static int dfs(int idx) { /* 1 + 2 + 1 */  //its[n] = new Item(0, 0);
+//    static int fail(int idx) { /* 1 + 2 + 1 */  //its[n] = new Item(0, 0);
 //        // 물건 없어도 dp는 생길 수 있다.
 //
 //        int w = its[idx].w;
@@ -95,7 +108,7 @@ public class Main {
 //    }
 
 
-//    static int dfs(int w) {  //its[n] = new Item(k, 0); /* 같은 값 2개 불가능, 1 + 2 + 1 */
+//    static int fail(int w) {  //its[n] = new Item(k, 0); /* 같은 값 2개 불가능, 1 + 2 + 1 */
 //        // 물건 없어도 dp는 생길 수 있다.
 //
 //        // 이미 업데이트 된 경우
