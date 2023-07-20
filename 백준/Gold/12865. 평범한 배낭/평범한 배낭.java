@@ -5,40 +5,43 @@ public class Main {
 
     static int n, k, result = 0;
     static int[][] dp;
-    static int[] values;
     static Item[] its;
 
     public static void main(String[] args) throws IOException {
-        //BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        //StringTokenizer st = new StringTokenizer(br.readLine()); Integer.parseInt(st.nextToken());
-        n = read(); // 물건 개수 
-        k = read();// 감당 무게
+        n = read();  // 물건 개수
+        k = read();  // 감당 무게
 
-        dp = new int[100001][n + 1];  // [weight][index]
-        //Arrays.fill(dp, -1);
+        dp = new int[k + 1][n + 1];  // [weight][index]
 
         its = new Item[n + 1];
-        values = new int[100001];
         for (int i = 0; i < n; i++) {
-            //st = new StringTokenizer(br.readLine()); Integer.parseInt(st.nextToken());
             int w = read();
             int v = read();
 
             its[i] = new Item(w, v);
-            values[w] = v;
             //dp[w] = Math.max(dp[w], v);
         }
         its[n] = new Item(0, 0);
         Arrays.sort(its); /***/
-        //for (int i = 0; i <= n; i++) System.out.println(its[i].w + " " + its[i].v);
 
 
         dfs(0, 0);
-        //for (int k = 0; k <= n; k++) System.out.print(dp[304][k] + " ");
+
         System.out.println(result);
     }
 
-    static void dfs(int idx, int weight) {
+//    static void dfs() {  // Bottom - up
+//        for (int i = 0; i < n; i++) {
+//            int weight = read(), value = read();
+//
+//            for (int j = k; j >= weight; j--)  // k ~ weight
+//                dp[j] = Math.max(dp[j], dp[j - weight] + value);
+//        }
+//
+//        //System.out.println(dp[k]);
+//    }
+
+    static void dfs(int idx, int weight) {  // Bottom - up  //its[n] = new Item(0, 0);
         for (int i = idx + 1; i <= n; i++) {
             int sum = weight + its[i].w;
             if (sum > k) break;
@@ -54,51 +57,15 @@ public class Main {
     }
 
 
-//    static boolean dfs(int idx, int weight) {
-//        // 물건 없어도 dp는 생길 수 있다.
-//        // dp 기본값 : value or -1 (물건 있을 때 없을 떄)
-//        if (dp[weight] == -1) return false;
-//
-//        // 이미 업데이트
-//        if (dp[weight] != -1) return true;
-//
-//
-//        // 원래 물건 가치 넣어주기
-//        dp[weight] = values[weight];
-//
-//        for (int i = idx; i >= 0; i--) {
-//            if (its[i].w > weight) continue;
-//
-//            int remain = weight - its[i].w;
-//
-//            dfs(i - 1, remain);
-//            dp[weight] = Math.max(dp[weight], dp[remain] + its[i].v);
-//
-//            result = Math.max(result, dp[weight]);
-//        }
-//
-//    }
-
-
-//    static void dfs(int idx, int weight) { /* 시 간 초 과 */
-//        for (int i = idx + 1; i <= n; i++) {
-//            int sum = weight + its[i].w;
-//            if (sum > k) break;
-//
-//            result = Math.max(result, dp[weight] + its[i].v);
-//
-//            dfs(i, sum);
-//        }
-//
-//    }
-//
 //    static void dfs(int idx, int weight) {  //its[n] = new Item(0, 0);
 //        for (int i = idx + 1; i <= n; i++) {
 //            int sum = weight + its[i].w;
-//            System.out.print(sum + " ");
 //            if (sum > k) break;      // 어차피 뒤에 것들은 다 크니까
 //
-//            if (dp[sum] >= dp[weight] + its[i].v) continue; /* 원 인 : l 까지 더했을 때, l + 2 까지 더했을 때, 이미 확정되어서 */
+//            /* 실패 원 인 : l 까지 더했을 때, l + 2 까지 더했을 때, 이미 확정되어서
+//               그렇다고 없으면 시 간 초 과
+//             */
+//            if (dp[sum] >= dp[weight] + its[i].v) continue;
 //
 //            dp[sum] = dp[weight] + its[i].v;
 //            result = Math.max(result, dp[sum]);
@@ -120,7 +87,7 @@ public class Main {
 //        for (int i = idx + 1; i < n; i++) {
 //            int new_w = w + its[i].w;
 //            if (new_w > k) break;
-//            System.out.println(new_w + " = " + w + " + " + its[i].w);
+
 //            dp[new_w] = Math.max(dp[new_w], dp[w] + dfs(i));
 //        }
 //
@@ -161,8 +128,7 @@ public class Main {
 
         @Override
         public int compareTo(Item o) { /***/
-            if (this.w == o.w) return this.v - o.v;
-            else return this.w - o.w; // 가벼운 거
+            return this.w - o.w; // 가벼운 거
         }
 
     }
