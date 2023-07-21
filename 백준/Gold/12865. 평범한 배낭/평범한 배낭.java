@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static Integer[][] dp;
+    static int[][] dp;
     static int[] w, v;
 
     public static void main(String[] args) throws IOException {
@@ -20,7 +20,7 @@ public class Main {
 
         w = new int[n];
         v = new int[n];
-        dp = new Integer[n][k + 1];  // [n개 물건][가방 무게 합]
+        dp = new int[n][k + 1];  // [n개 물건][가방 무게 합]
 
         for (int i = 0; i < n; i++) {
             st = new StringTokenizer(br.readLine(), " ");
@@ -29,19 +29,19 @@ public class Main {
         }
 
 
-        System.out.println(DP(n - 1, k));
+        System.out.println(knapsack(n - 1, k));
     }
 
-    static int DP(int i, int k) {
+    static int knapsack(int i, int k) {
         // Base case
         if (i < 0) return 0;
 
         // 업데이트 되었다면
-        if (dp[i][k] != null) return dp[i][k];  /****/
+        if (dp[i][k] != 0) return dp[i][k];  /****/
 
         // 현재 물건(i)을 추가로 못담는 경우 (이전 i값 탐색)
-        if (w[i] > k) dp[i][k] = DP(i - 1, k);
-        else dp[i][k] = Math.max(DP(i - 1, k), DP(i - 1, k - w[i]) + v[i]);
+        if (w[i] > k) dp[i][k] = knapsack(i - 1, k);
+        else dp[i][k] = Math.max(knapsack(i - 1, k), knapsack(i - 1, k - w[i]) + v[i]);
 
 
         return dp[i][k];
