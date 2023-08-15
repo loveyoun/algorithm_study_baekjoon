@@ -5,43 +5,43 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-    static int N, M;
-    static long[] immigration_time;
+    static int n, m;
+    static long[] time;
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
-        N = Integer.parseInt(st.nextToken()); // 입국 심사대
-        M = Integer.parseInt(st.nextToken()); // 상근이 칭구들
-        immigration_time = new long[N];
+        n = Integer.parseInt(st.nextToken());   // 입국 심사대
+        m = Integer.parseInt(st.nextToken());   // 상근이 칭구들
+        time = new long[n];
         long max = 0;
-        for (int i = 0; i < N; i++) {
-            immigration_time[i] = Long.parseLong(br.readLine());
-            max = Math.max(max, immigration_time[i]);
+        for (int i = 0; i < n; i++) {
+            time[i] = Long.parseLong(br.readLine());
+            max = Math.max(max, time[i]);
         }
         //Arrays.sort(immigration_time);
 
-        long share = M / N;
-        // M = 2, N = 4인 경우 한 번에 다 받을 수 있어서
-        if (share == 0) share = 1;
 
-        long result = binarySearch(0, max * share);
-        System.out.println(result);
+        long share = m % n == 0 ? m / n : m / n + 1;   /* 2 3 \n 9 \n 10 */
+        if (share == 0) share = 1;   // M = 2, N = 4인 경우
+
+
+        System.out.println(binarySearch(0, max * share));
     }
 
-    static long binarySearch(long left, long right) {
-        while (left < right) {
-            long mid = (left + right) / 2;
+    static long binarySearch(long l, long r) {
+        while (l < r) {
+            long mid = (l + r) / 2;
             long total = 0;
-            for (int i = 0; i < N; i++)
-                total += mid / immigration_time[i];
+            for (int i = 0; i < n; i++)
+                total += mid / time[i];
 
-            // 심사를 다 마칠 수 없으니, 시간을 늘려야됨
-            if (total < M) left = mid + 1;
-            else right = mid;
+            if (total >= m) r = mid;
+            else l = mid + 1;
+
         }
 
-        return left;
+        return l;
     }
 
 }
