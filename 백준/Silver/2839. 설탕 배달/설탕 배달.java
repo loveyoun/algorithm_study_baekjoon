@@ -12,7 +12,7 @@ public class Main {
         n = Integer.parseInt(br.readLine());
 
 
-        System.out.println(dp());
+        System.out.println(divide5());
     }
 
 
@@ -40,12 +40,61 @@ public class Main {
         return bong[n];
     }
 
-    static int divide5() {
-        return 0;
-    }
+//    static int divide35() {
+//        int bag3 = 0, bag5 = 0;
+//
+//        if (n % 5 == 0) {
+//            System.out.print(n / 5);
+//            return;
+//        }
+//        while ((n / 3) > 0) {
+//            n = n - 3;
+//            bag3++;
+//            if ((n % 5) == 0) {
+//                System.out.print(n / 5 + bag3);
+//                return;
+//            }
+//        }
+//        if (n == 0) System.out.print(bag3);
+//        else System.out.print(-1);
+//    }
+//
+//    static int divide3() {
+//        if (n % 3 == 0 && n < 15) {
+//            System.out.print(n / 3);
+//            return;
+//        } else {
+//            int n = n / 3;
+//            int r = n % 3;
+//            while (n > 0) {
+//                if ((3 * n + r) % 5 == 0) {
+//                    System.out.print(n / 3 - n + (3 * n + r) / 5);
+//                    return;
+//                }
+//                n--;
+//            }
+//            System.out.print(-1);
+//            return;
+//        }
+//    }
 
-    static int divide3() {
-        return 0;
+    static int divide5() {
+        int q = n / 5;
+        int r = n % 5;
+
+        if (r == 1) {
+            if (q >= 1) return q += -1 + 2;
+            else q = -1;
+        } else if (r == 2) {
+            if (q >= 2) return q += -2 + 4;
+            else q = -1;
+        } else if (r == 3) return q += 1;
+        else if (r == 4) {
+            if (q >= 1) return q += -1 + 3;
+            else q = -1;
+        }
+
+        return q;
     }
 
 }
