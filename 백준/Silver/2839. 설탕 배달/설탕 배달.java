@@ -12,7 +12,7 @@ public class Main {
         n = Integer.parseInt(br.readLine());
 
 
-        System.out.println(divide5());
+        System.out.println(divide35());
     }
 
 
@@ -40,25 +40,64 @@ public class Main {
         return bong[n];
     }
 
-//    static int divide35() {
-//        int bag3 = 0, bag5 = 0;
-//
-//        if (n % 5 == 0) {
-//            System.out.print(n / 5);
-//            return;
-//        }
-//        while ((n / 3) > 0) {
-//            n = n - 3;
-//            bag3++;
-//            if ((n % 5) == 0) {
-//                System.out.print(n / 5 + bag3);
-//                return;
-//            }
-//        }
-//        if (n == 0) System.out.print(bag3);
-//        else System.out.print(-1);
-//    }
-//
+    static int dp2() {
+        int[] dp = new int[n + 1];
+        if (n >= 3) dp[3] = 1;
+        if (n >= 5) dp[5] = 1;
+
+
+        for (int i = 6; i <= n; i++) {
+            if (i % 5 == 0)
+                dp[i] = dp[i - 5] + 1;
+            else if (i % 3 == 0)
+                dp[i] = dp[i - 3] + 1;
+            else {
+                if (dp[i - 3] != 0 && dp[i - 5] != 0)
+                    dp[i] = Math.min(dp[i - 3], dp[i - 5]) + 1;
+            }
+
+        }
+
+
+        return dp[n];
+    }
+
+
+    static int divide() {
+        int cnt = 0;
+
+        while (n > 0) {
+            if (n % 5 == 0) {
+                cnt++;
+                n -= 5;
+            } else {
+                cnt++;
+                n -= 3;
+            }
+
+            if (n < 0) return -1;
+        }
+
+        return cnt;
+    }
+
+    static int divide35() {
+        int bag3 = 0;
+
+        if (n % 5 == 0) return n / 5;
+
+        while ((n / 3) > 0) {
+            n -= 3;
+            bag3++;
+            if ((n % 5) == 0)
+                return n / 5 + bag3;
+
+        }
+
+        if (n == 0) return bag3;
+        else return -1;
+    }
+
 //    static int divide3() {
 //        if (n % 3 == 0 && n < 15) {
 //            System.out.print(n / 3);
@@ -95,6 +134,15 @@ public class Main {
         }
 
         return q;
+    }
+
+    static int divide53() {   // == n - 5, - 10...
+        for (int i = n / 5; i >= 0; i--) {
+            if ((n - (5 * i)) % 3 == 0)
+                return i + ((n - (5 * i)) / 3);
+        }
+
+        return -1;
     }
 
 }
