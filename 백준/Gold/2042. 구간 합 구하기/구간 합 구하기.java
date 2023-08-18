@@ -12,20 +12,20 @@ public class Main {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
         int n = Integer.parseInt(st.nextToken());
-        int m = Integer.parseInt(st.nextToken());  // 변경 횟수
-        int k = Integer.parseInt(st.nextToken());  // 연산 횟수
+        int m = Integer.parseInt(st.nextToken());   // 변경 횟수
+        int k = Integer.parseInt(st.nextToken());   // 연산 횟수
 
-        int level = 0;
-        while ((1 << level) < n) level++;
-        int treeSize = (int) Math.pow(2, level + 1);  // 8개면 4층까지 (2 ^ 0 ~ 2 ^ 3) : 15개 -> 2 ^ 4
-        int indexing = treeSize / 2 - 1;  // + 7 인덱싱
+        int lev = 0;
+        while ((1 << lev) < n) lev++;
+        int treeSize = (int) Math.pow(2, lev + 1);   // 2³개면 4층까지 (1 +...+ 2³) : 15개 -> 0 ~ 2⁴ - 1 : 16개
+        int indexing = treeSize / 2;   // + 8 인덱싱
 
-        tree = new long[treeSize];  // 1 ~ 15 번 사용
-        for (int i = indexing + 1; i <= indexing + n; i++)
+        tree = new long[treeSize];   // 0 ~ 2⁴ - 1
+        for (int i = indexing; i < indexing + n; i++)
             tree[i] = Long.parseLong(br.readLine());
 
 
-        setTree(treeSize - 1);
+        setTree(indexing + n - 1);   // treeSize - 1
 
 
         for (int i = 0; i < m + k; i++) {
@@ -35,18 +35,18 @@ public class Main {
             long e = Long.parseLong(st.nextToken());
 
             // 변경
-            if (a == 1) changeVal(indexing + s, e);
-            // 구간 합
+            if (a == 1) changeVal(indexing + s - 1, e);
+                // 구간 합
             else if (a == 2) {
-                s = s + indexing;
-                e = e + indexing;
+                s = s + indexing - 1;
+                e = e + indexing - 1;
 
                 sb.append(getSum(s, (int) e)).append("\n");
             } else break;
 
         }
 
-        System.out.println(sb);
+        System.out.print(sb);
     }
 
     private static void changeVal(int index, long val) {
@@ -60,12 +60,13 @@ public class Main {
 
     private static long getSum(int s, int e) {
         long partSum = 0;
+
         while (s <= e) {
-            if (s % 2 == 1) {  // 선택
+            if (s % 2 == 1) {   // odd 선택
                 partSum += tree[s];
                 s++;
             }
-            if (e % 2 == 0) {  // 선택
+            if (e % 2 == 0) {   // even 선택
                 partSum += tree[e];
                 e--;
             }
@@ -80,7 +81,7 @@ public class Main {
 
     private static void setTree(int i) {
         while (i != 1) {
-            tree[i / 2] += tree[i];  // 8, 9 -> 4
+            tree[i / 2] += tree[i];   // 8, 9 -> 4
             i--;
         }
 
