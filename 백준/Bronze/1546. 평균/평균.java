@@ -1,19 +1,24 @@
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
-public class Main{
-    public static void main(String[] args){
-        Scanner sc = new Scanner(System.in);
-        int N = sc.nextInt();
-        int A[] = new int[N];
-        long sum = 0;
-        long max = 0;
-        
-        for (int i=0;i<N;i++){
-            A[i] = sc.nextInt();
-            max = max>A[i]? max : A[i];
-            sum += A[i];
+public class Main {
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        int N = Integer.valueOf(br.readLine());
+        int[] arr = new int[N];
+
+        long sum = 0, max = 0;
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        for (int i = 0; i < N; i++) {
+            arr[i] = Integer.parseInt(st.nextToken());
+            max = max > arr[i] ? max : arr[i];
+            sum += arr[i]; /***/
         }
-        
-        System.out.println(sum*100.0/max/N);
+
+        System.out.println(sum * 100.0 / max / N);
     }
+
 }
