@@ -1,43 +1,36 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Stack;
 
 public class Main {
 
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         int N = Integer.parseInt(br.readLine());
-        int[] arr = new int[N];
-        for (int i = 0; i < N; i++) arr[i] = Integer.parseInt(br.readLine());
+        int[] array = new int[N];
 
-        Stack<Integer> stack = new Stack<>();
-        int n = 1;
-        boolean isPos = true;
-        for (int out : arr) { // arr.length
-            if (out >= n) {
-                while (out >= n) {
-                    stack.push(n++);
-                    sb.append("+\n");
+        int n = 0, top = 0;
+        while (N-- > 0) {
+            int out = Integer.parseInt(br.readLine());
+
+            // out(7) n(8) top(7를 가리키는 idx)
+            if (out > n) { // out 까지 push
+                for (int i = n + 1; i <= out; i++) {
+                    array[top++] = i;
+                    sb.append('+').append('\n');
                 }
-                stack.pop();
-                sb.append("-\n");
-            } else { //뺄 수 있는지 크기 비교 해주어야 함.
-                int top = stack.pop();
-
-                // top = 4 > out = 3 일 때
-                if (top != out) {
-                    System.out.println("NO");
-                    isPos = false;
-                    break;
-                } else sb.append("-\n");
+                n = out;
+            } else if (array[top - 1] != out) { // pop
+                System.out.println("NO");
+                return;
             }
-
+            top--; // pop
+            sb.append('-').append('\n');
         }
 
-        if (isPos) System.out.println(sb);
+        System.out.println(sb);
     }
 
 }
