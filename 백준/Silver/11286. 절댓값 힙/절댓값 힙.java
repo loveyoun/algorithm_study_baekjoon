@@ -6,36 +6,29 @@ import java.util.PriorityQueue;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        /** 11286_Algorithm flow : Priority Queue
-         **/
-
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        StringBuilder sb = new StringBuilder();
         int N = Integer.parseInt(br.readLine());
 
-        /** new PriorityQueue<>((파라미터들) -> {실행문}); **/
         PriorityQueue<Integer> myQueue = new PriorityQueue<>((o1, o2) -> {
-            int first_abs = Math.abs(o1);
-            int second_abs = Math.abs(o2);
+            int o1_abs = Math.abs(o1);
+            int o2_abs = Math.abs(o2);
 
-            if (first_abs == second_abs)
-                // 1 > (-1) : 1 => rear 1 -1 front : 오름차순이 default 이다.
+            if (o1_abs == o2_abs) // 오름차순
+                // 원래1 > 새로운(-1) : 정렬 true
                 return o1 > o2 ? 1 : -1;
             else
-                // |-2| - |1| > 0 : rear |-2| |1| front : 양수이면 그대로 오름차순.
-                return first_abs - second_abs;
+                // 원래|-2| - 새로운|1| : true
+                return o1_abs - o2_abs;
         });
-        
 
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < N; i++) {
-            int request = Integer.parseInt(br.readLine());
+            int n = Integer.parseInt(br.readLine());
 
-            if (request == 0) {
-                if (myQueue.isEmpty())
-                    sb.append("0\n");
-                else
-                    sb.append(myQueue.poll() + "\n");
-            } else myQueue.add(request);
+            if (n == 0) {
+                if (myQueue.isEmpty()) sb.append("0\n");
+                else sb.append(myQueue.poll()).append("\n");
+            } else myQueue.add(n);
         }
 
         System.out.println(sb);
