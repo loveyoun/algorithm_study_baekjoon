@@ -33,7 +33,7 @@ public class Main {
         int s = 0, e = N - 1;
         while (s < e) {
             int m = (s + e) >> 1;
-            if (tar <= arr[m]) e = m; // s e(tar) tar tar
+            if (tar <= arr[m]) e = m; // s e tar tar
             else s = m + 1;
         }
 
