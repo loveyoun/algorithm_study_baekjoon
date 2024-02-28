@@ -39,7 +39,7 @@ public class Main {
         int cb = b; //pa = find(b);
         while (a != parent[a]) a = find(a);
         while (b != parent[b]) b = find(b);
-        if (ca != cb) parent[b] = a;
+        if (a != b) parent[b] = a;
         parent[cb] = a;
     }
 
